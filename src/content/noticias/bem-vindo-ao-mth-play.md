@@ -4,20 +4,40 @@ description: Agora o MTH Play tem casa própria fora do YouTube, com notícias d
 date: 2026-11-21T10:00:00-03:00
 type: noticia
 category: geral
-author: Equipe MTH Play
+author: equipe-mth-play
+cover: /uploads/bem-vindo-mth-play.jpg
+coverAlt: Logo do MTH Play
 tags: [MTH Play, Novidades]
 featured: true
 ---
 
-O MTH Play agora tem um site! Além dos cortes e do quadro **“A primeira HORA”** no YouTube, por aqui você vai encontrar:
+Chegou o dia! O **MTH Play** agora tem um site próprio. O que começou no YouTube, com cortes, gameplays e o quadro **“A primeira HORA”**, ganha um lugar novo pra quem quer acompanhar o mundo dos games todo dia, com calma e sem depender do algoritmo.
 
-- **Notícias** de PC, PlayStation, Xbox, Nintendo e mobile;
-- **Reviews** com nota de 0 a 10, prós e contras;
-- **Guias e listas** para quem quer ir direto ao ponto;
-- **Lançamentos** do mês.
+A ideia é simples: juntar em um só lugar as notícias que importam, opiniões sinceras sobre os jogos e um conteúdo que ajude você a decidir o que jogar.
+
+## O que você vai encontrar por aqui
+
+- **Notícias:** o que está rolando em PlayStation, Xbox, Nintendo, PC e mobile, direto ao ponto.
+- **Reviews com nota:** análises com nota de 0 a 10, prós e contras, pra você saber se vale a pena antes de comprar.
+- **Guias e listas:** dicas, detonados e rankings pra aproveitar melhor cada jogo.
+- **[Calendário de lançamentos](/lancamentos/):** os próximos jogos mês a mês, com filtro pela sua plataforma.
+- **[Páginas de jogo](/jogos/):** tudo sobre cada jogo em um só lugar, de notícias e trailer a review e data de lançamento.
+- **[Vídeos](/videos/):** os conteúdos do canal, incluindo os episódios de “A primeira HORA”.
+
+## Do YouTube para o site
+
+O canal continua a todo vapor. O site vem pra somar: aqui as notícias saem por escrito, dá pra pesquisar qualquer assunto na [busca](/busca/) e voltar pra consultar um guia sempre que precisar. E os vídeos do canal aparecem junto das matérias relacionadas.
+
+> Se você chegou até aqui pelo canal: valeu demais por acompanhar desde o começo. Esse site é pra você.
 
 ## Como acompanhar
 
-Salve o site nos favoritos, siga o canal [@mthplayoficial](https://www.youtube.com/@mthplayoficial) e ative o sininho. Se você usa leitor de RSS, o feed fica em `/rss.xml`.
+- Salve o **mthplay.pages.dev** nos favoritos e passe por aqui todo dia.
+- Siga o MTH Play no [YouTube](https://www.youtube.com/@mthplayoficial), no [Instagram](https://www.instagram.com/mthplayoficial) e no [TikTok](https://www.tiktok.com/@mthplayoficial) pra ser avisado das novidades.
+- Compartilhe as matérias com a galera. É isso que faz o MTH Play crescer.
 
-> Este é um post de exemplo. Edite ou apague pelo painel em /admin.
+## Fala com a gente
+
+Tem sugestão de pauta, achou algum erro ou quer mandar um jogo pra review? Chama a gente pela página de [Contato](/contato/). Toda mensagem é lida.
+
+Bem-vindo ao MTH Play. **Bora jogar!** 🎮

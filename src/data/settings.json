@@ -2,9 +2,9 @@
   "name": "MTH Play",
   "tagline": "Notícias, reviews e guias de games",
   "description": "MTH Play: as principais notícias de games, reviews, guias e lançamentos de PC, PlayStation, Xbox, Nintendo e mobile.",
-  "url": "https://mthplay.pages.dev",
   "logo": "/logo.png",
   "email": "",
+  "url": "https://mthplay.pages.dev",
   "colors": {
     "primary": "#22d3ee",
     "secondary": "#ff2bb3"
@@ -27,19 +27,64 @@
     "text": "Siga o MTH Play e receba as notícias de games primeiro."
   },
   "footerNote": "Feito com paixão por games 🎮",
-  "homeSections": ["playstation", "xbox", "nintendo", "pc"],
   "categories": [
-    { "slug": "playstation", "name": "PlayStation", "color": "#3b82f6", "menu": true },
-    { "slug": "xbox", "name": "Xbox", "color": "#22c55e", "menu": true },
-    { "slug": "nintendo", "name": "Nintendo", "color": "#ef4444", "menu": true },
-    { "slug": "pc", "name": "PC", "color": "#06b6d4", "menu": true },
-    { "slug": "mobile", "name": "Mobile", "color": "#f59e0b", "menu": true },
-    { "slug": "esports", "name": "eSports", "color": "#a855f7", "menu": true },
-    { "slug": "lancamentos", "name": "Lançamentos", "color": "#ec4899", "menu": false },
-    { "slug": "geral", "name": "Geral", "color": "#64748b", "menu": false }
+    {
+      "name": "PlayStation",
+      "slug": "playstation",
+      "color": "#3b82f6",
+      "menu": true
+    },
+    {
+      "name": "Xbox",
+      "slug": "xbox",
+      "color": "#22c55e",
+      "menu": true
+    },
+    {
+      "name": "Nintendo",
+      "slug": "nintendo",
+      "color": "#ef4444",
+      "menu": true
+    },
+    {
+      "name": "PC",
+      "slug": "pc",
+      "color": "#06b6d4",
+      "menu": true
+    },
+    {
+      "name": "Mobile",
+      "slug": "mobile",
+      "color": "#f59e0b",
+      "menu": true
+    },
+    {
+      "name": "eSports",
+      "slug": "esports",
+      "color": "#a855f7",
+      "menu": true
+    },
+    {
+      "name": "Lançamentos",
+      "slug": "lancamentos",
+      "color": "#ec4899",
+      "menu": false
+    },
+    {
+      "name": "Geral",
+      "slug": "geral",
+      "color": "#64748b",
+      "menu": false
+    }
   ],
-  "googleVerification": "",
+  "homeSections": [
+    "playstation",
+    "xbox",
+    "nintendo",
+    "pc"
+  ],
   "adsenseClient": "",
+  "googleVerification": "<meta name=\"google-site-verification\" content=\"yyonXdizVPUQEwngH7H8jQji1yg1-Lg46sZ6yMQh6rY\" />",
   "giscus": {
     "repo": "",
     "repoId": "",

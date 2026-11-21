@@ -10,6 +10,7 @@ cover: /uploads/gta-vi-primeira-hora.jpg
 coverAlt: Lucía e Jason com as mãos ao alto na primeira hora de GTA 6
 youtube: https://www.youtube.com/watch?v=KMnmyCFjFlg
 tags: [GTA 6, GTA VI, A primeira HORA, Rockstar]
+pinned: true
 featured: true
 trending: true
 game: Grand Theft Auto VI

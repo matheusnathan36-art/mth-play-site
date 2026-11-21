@@ -10,8 +10,11 @@ import { socialLinks } from '../lib/social';
 const posts = await getPosts();
 
 // Mosaico do topo: publicações em Destaque primeiro, completando com as mais recentes.
-const featured = posts.filter((p) => p.data.featured);
-const heroPosts = [...featured, ...posts.filter((p) => !p.data.featured)].slice(0, 5);
+// A publicação "Fixada" fica sempre como manchete principal, mesmo com matérias mais novas.
+const pinned = posts.filter((p) => p.data.pinned);
+const featured = posts.filter((p) => p.data.featured && !p.data.pinned);
+const rest0 = posts.filter((p) => !p.data.featured && !p.data.pinned);
+const heroPosts = [...pinned.slice(0, 1), ...featured, ...pinned.slice(1), ...rest0].slice(0, 5);
 const heroIds = new Set(heroPosts.map((p) => p.id));
 const rest = posts.filter((p) => !heroIds.has(p.id));
 

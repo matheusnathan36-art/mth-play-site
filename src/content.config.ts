@@ -31,6 +31,7 @@ const noticias = defineCollection({
     tags: optList,
     featured: z.boolean().nullish().transform((v) => !!v),
     trending: z.boolean().nullish().transform((v) => !!v),
+    pinned: z.boolean().nullish().transform((v) => !!v), // fixada como manchete principal
     draft: z.boolean().nullish().transform((v) => !!v),
     youtube: optStr,
     // Campos de review

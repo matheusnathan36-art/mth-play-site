@@ -87,6 +87,7 @@ collections:
         required: false
         hint: 'A matéria aparece na página do jogo. Cadastre o jogo antes em "Jogos".'
       - { label: Tags, name: tags, widget: list, required: false, hint: 'Separe por vírgula. Ex.: GTA VI, Rockstar' }
+      - { label: Fixar como manchete principal, name: pinned, widget: boolean, default: false, required: false, hint: 'Fica sempre no card grande da home, mesmo com matérias mais novas. Deixe só uma fixada por vez.' }
       - { label: Destaque na home (mosaico do topo), name: featured, widget: boolean, default: false }
       - { label: Em alta (ranking lateral), name: trending, widget: boolean, default: false }
       - { label: Rascunho (não publicar ainda), name: draft, widget: boolean, default: false }

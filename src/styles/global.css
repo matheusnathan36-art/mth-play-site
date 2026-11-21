@@ -1327,6 +1327,9 @@ a:hover .cover img {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+.review-cols.one-col {
+  grid-template-columns: 1fr;
+}
 .review-cols > div {
   padding: 20px 24px;
 }

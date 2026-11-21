@@ -121,15 +121,19 @@ const jsonLd = {
               </div>
             </div>
             {(d.pros.length > 0 || d.cons.length > 0) && (
-              <div class="review-cols">
-                <div class="pros">
-                  <h3>Prós</h3>
-                  <ul>{d.pros.map((x) => <li>{x}</li>)}</ul>
-                </div>
-                <div class="cons">
-                  <h3>Contras</h3>
-                  <ul>{d.cons.map((x) => <li>{x}</li>)}</ul>
-                </div>
+              <div class:list={['review-cols', { 'one-col': !d.pros.length || !d.cons.length }]}>
+                {d.pros.length > 0 && (
+                  <div class="pros">
+                    <h3>Prós</h3>
+                    <ul>{d.pros.map((x) => <li>{x}</li>)}</ul>
+                  </div>
+                )}
+                {d.cons.length > 0 && (
+                  <div class="cons">
+                    <h3>Contras</h3>
+                    <ul>{d.cons.map((x) => <li>{x}</li>)}</ul>
+                  </div>
+                )}
               </div>
             )}
           </section>

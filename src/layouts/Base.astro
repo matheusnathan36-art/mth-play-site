@@ -17,6 +17,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 // Sem capa, usa a arte padrão com o logo ao compartilhar no WhatsApp/redes.
 const ogImage = new URL(image ?? '/og-default.png', Astro.site).href;
 const path = Astro.url.pathname;
+// Aceita só o código ou a tag inteira colada do Google.
+const gv = (SITE.googleVerification || '').trim();
+const googleCode = gv.match(/content=["']([^"']+)["']/)?.[1] ?? gv.replace(/[<>"]/g, '');
 const tags = topTags(await getPosts(), 8);
 const platforms = MENU_CATEGORIES;
 const sections = [
@@ -54,7 +57,7 @@ const allSections = [...sections, { href: '/listas/', label: 'Listas' }];
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
-    {SITE.googleVerification && <meta name="google-site-verification" content={SITE.googleVerification} />}
+    {googleCode && <meta name="google-site-verification" content={googleCode} />}
     {
       SITE.adsenseClient && (
         <script

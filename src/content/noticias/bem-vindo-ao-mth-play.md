@@ -8,7 +8,6 @@ author: equipe-mth-play
 cover: /uploads/bem-vindo-mth-play.jpg
 coverAlt: Logo do MTH Play
 tags: [MTH Play, Novidades]
-featured: true
 ---
 
 Chegou o dia! O **MTH Play** agora tem um site próprio. O que começou no YouTube, com cortes, gameplays e o quadro **“A primeira HORA”**, ganha um lugar novo pra quem quer acompanhar o mundo dos games todo dia, com calma e sem depender do algoritmo.

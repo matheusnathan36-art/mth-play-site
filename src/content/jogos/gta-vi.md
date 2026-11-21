@@ -7,6 +7,7 @@ platforms: [playstation, xbox]
 developer: Rockstar Games
 publisher: Rockstar Games
 genres: [Ação, Mundo aberto]
+trailer: https://www.youtube.com/watch?v=VQRLujxTm3c
 aliases: [GTA 6, GTA VI, GTA6]
 featured: true
 ---

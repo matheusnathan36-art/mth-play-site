@@ -92,7 +92,7 @@ const jsonLd = {
       {
         yt ? (
           <button class="video yt-lite" data-id={yt} aria-label={`Assistir: ${d.title}`}>
-            <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" loading="eager" />
+            <img src={d.cover ?? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" loading="eager" />
             <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span>
           </button>
         ) : (

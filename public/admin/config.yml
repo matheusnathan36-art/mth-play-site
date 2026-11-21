@@ -1,13 +1,12 @@
 # Painel de notícias do MTH Play (Sveltia CMS)
 # Acesse em: https://SEU-SITE/admin/
 #
-# >>> TROQUE as duas linhas marcadas com "TROCAR" depois de criar o GitHub e o login (ver COMO-PUBLICAR.md)
 
 backend:
   name: github
   repo: matheusnathan36-art/mth-play-site
   branch: main
-  base_url: https://sveltia-cms-auth.SEU-USUARIO.workers.dev # TROCAR: endereço do seu Worker de login
+  base_url: https://sveltia-cms-auth.matheusnathan36.workers.dev
   commit_messages:
     create: 'Nova publicação: {{slug}}'
     update: 'Atualiza: {{slug}}'

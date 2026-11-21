@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../layouts/Base.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Pager from '../../../components/Pager.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import { getPosts } from '../../../lib/posts';
+import { CATEGORIES } from '../../../data/site';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return CATEGORIES.flatMap((c) =>
+    paginate(
+      posts.filter((p) => p.data.category === c.slug),
+      { pageSize: 12, params: { cat: c.slug }, props: { name: c.name, color: c.color } },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, name, color } = Astro.props;
+const first = page.currentPage === 1;
+const top = first ? page.data.slice(0, 3) : [];
+const list = first ? page.data.slice(3) : page.data;
+---
+
+<Base title={name} description={`Notícias, reviews e guias de ${name} no MTH Play.`}>
+  <header class="page-head cat-head" style={`--cat:${color}`}>
+    <span class="pill" style={`--cat:${color}`}>Plataforma</span>
+    <h1 class="page-title">{name}</h1>
+    <p class="page-sub">Notícias, reviews, guias e lançamentos de {name}.</p>
+  </header>
+
+  {page.data.length === 0 && <p class="page-sub">Ainda não há publicações nesta categoria.</p>}
+
+  {
+    top.length > 0 && (
+      <section class="mosaic mosaic-3">
+        {top.map((p, i) => <PostCard post={p} variant="overlay" size={i === 0 ? 'lg' : 'sm'} eager />)}
+      </section>
+    )
+  }
+
+  <div class="layout-2 section">
+    <section>
+      <div class="rows">
+        {list.map((p) => <PostCard post={p} variant="row" />)}
+      </div>
+      <Pager prev={page.url.prev} next={page.url.next} />
+    </section>
+    <Sidebar />
+  </div>
+</Base>

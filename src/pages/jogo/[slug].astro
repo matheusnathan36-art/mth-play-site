@@ -1,0 +1,121 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import PostCard from '../../components/PostCard.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getJogos, getPosts, postsOfJogo, releaseLabel, isReleased, categoryName, categoryColor, youtubeId } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const [jogos, posts] = await Promise.all([getJogos(), getPosts()]);
+  return jogos.map((jogo) => ({ params: { slug: jogo.id }, props: { jogo, posts: postsOfJogo(posts, jogo) } }));
+}
+
+const { jogo, posts } = Astro.props;
+const d = jogo.data;
+const { Content } = await render(jogo);
+const yt = youtubeId(d.trailer);
+const cover = d.cover ?? (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined);
+const review = posts.find((p) => p.data.type === 'review' && p.data.score != null);
+const news = posts.filter((p) => p !== review);
+const guides = posts.filter((p) => p.data.type === 'guia' || p.data.type === 'lista');
+const facts = [
+  ['Lançamento', releaseLabel(jogo)],
+  ['Desenvolvedora', d.developer],
+  ['Publicadora', d.publisher],
+  ['Gênero', d.genres.join(', ')],
+].filter(([, v]) => v);
+---
+
+<Base title={d.title} description={d.description} image={cover}>
+  <nav class="crumbs" aria-label="Você está em">
+    <a href="/">Início</a><span>/</span><a href="/jogos/">Jogos</a>
+  </nav>
+
+  <section class="game-hero">
+    <Cover src={cover} alt={d.title} category={d.platforms[0] ?? 'geral'} eager />
+    <div class="game-hero-body">
+      <span class="pill pill-type">{isReleased(jogo) ? 'Disponível' : 'Em breve'}</span>
+      <h1>{d.title}</h1>
+      <p>{d.description}</p>
+      <div class="pills">
+        {d.platforms.map((p) => <a class="pill pill-lg" style={`--cat:${categoryColor(p)}`} href={`/categoria/${p}/`}>{categoryName(p)}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <div class="layout-2 section">
+    <div>
+      <dl class="facts">
+        {facts.map(([k, v]) => (
+          <div>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+        {review && (
+          <div>
+            <dt>Nota MTH Play</dt>
+            <dd><a href={`/noticia/${review.id}/`} class="score-inline">{Number(review.data.score).toFixed(1).replace('.0', '')}</a></dd>
+          </div>
+        )}
+      </dl>
+
+      <div class="prose"><Content /></div>
+
+      {
+        yt && (
+          <section class="section">
+            <SectionHead title="Trailer" />
+            <button class="video yt-lite" data-id={yt} aria-label={`Assistir trailer de ${d.title}`}>
+              <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" loading="lazy" />
+              <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span>
+            </button>
+          </section>
+        )
+      }
+
+      {
+        review && (
+          <section class="section">
+            <SectionHead title="Review" />
+            <PostCard post={review} variant="row" />
+          </section>
+        )
+      }
+
+      <section class="section">
+        <SectionHead title={`Tudo sobre ${d.title}`} />
+        {news.length === 0 && <p class="page-sub">Ainda não há notícias sobre este jogo.</p>}
+        <div class="rows">{news.map((p) => <PostCard post={p} variant="row" />)}</div>
+      </section>
+
+      {
+        guides.length > 0 && (
+          <section class="section">
+            <SectionHead title="Guias" />
+            <div class="grid-4">{guides.map((p) => <PostCard post={p} variant="card" showExcerpt={false} />)}</div>
+          </section>
+        )
+      }
+    </div>
+    <Sidebar />
+  </div>
+
+  <script is:inline>
+    document.querySelectorAll('.yt-lite').forEach((el) => {
+      el.addEventListener('click', () => {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${el.dataset.id}?autoplay=1`;
+        f.title = el.getAttribute('aria-label');
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        f.allowFullscreen = true;
+        const box = document.createElement('div');
+        box.className = 'video';
+        box.appendChild(f);
+        el.replaceWith(box);
+      }, { once: true });
+    });
+  </script>
+</Base>

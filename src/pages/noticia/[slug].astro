@@ -1,0 +1,208 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import Pill from '../../components/Pill.astro';
+import PostCard from '../../components/PostCard.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import Comments from '../../components/Comments.astro';
+import JogoCard from '../../components/JogoCard.astro';
+import {
+  getPosts, getJogos, jogoOfPost, categoryName, formatDate, readingTime, slugify, youtubeId,
+  authorOf, authorEntry, authorUrl, initials as toInitials, postUrl, coverOf,
+} from '../../lib/posts';
+import { SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, posts } }));
+}
+
+const { post, posts } = Astro.props;
+const d = post.data;
+const { Content } = await render(post);
+const yt = youtubeId(d.youtube);
+const author = authorOf(post);
+const authorE = authorEntry(post);
+const initials = toInitials(author);
+const jogo = jogoOfPost(await getJogos(), post);
+const related = posts
+  .filter((p) => p.id !== post.id)
+  .map((p) => ({
+    p,
+    s: (p.data.category === d.category ? 2 : 0) + p.data.tags.filter((t) => d.tags.includes(t)).length,
+  }))
+  .sort((a, b) => b.s - a.s || b.p.data.date.getTime() - a.p.data.date.getTime())
+  .slice(0, 4)
+  .map((x) => x.p);
+const url = new URL(postUrl(post), Astro.site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': d.type === 'review' ? 'Review' : 'NewsArticle',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.date.toISOString(),
+  dateModified: (d.updated ?? d.date).toISOString(),
+  author: { '@type': 'Person', name: author },
+  publisher: { '@type': 'Organization', name: SITE.name },
+  ...(d.cover ? { image: new URL(d.cover, Astro.site).href } : {}),
+  ...(d.type === 'review' && d.score != null && d.game
+    ? {
+        itemReviewed: { '@type': 'VideoGame', name: d.game },
+        reviewRating: { '@type': 'Rating', ratingValue: d.score, bestRating: 10, worstRating: 0 },
+      }
+    : {}),
+};
+---
+
+<Base title={d.title} description={d.description} image={coverOf(post)} type="article">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+  <nav class="crumbs" aria-label="Você está em">
+    <a href="/">Início</a><span>/</span><a href={`/categoria/${d.category}/`}>{categoryName(d.category)}</a>
+  </nav>
+
+  <div class="layout-2 article-layout">
+    <article class="article" data-pagefind-body>
+      <Pill category={d.category} type={d.type} link />
+      <h1>{d.title}</h1>
+      <p class="lead">{d.description}</p>
+
+      <div class="byline">
+        {
+          authorE?.data.avatar ? (
+            <img class="avatar" src={authorE.data.avatar} alt="" width="42" height="42" />
+          ) : (
+            <span class="avatar" aria-hidden="true">{initials}</span>
+          )
+        }
+        <div>
+          {authorE ? <a href={authorUrl(authorE)} class="byline-name">{author}</a> : <strong>{author}</strong>}
+          {authorE?.data.role && <span class="byline-role"> · {authorE.data.role}</span>}
+          <div class="meta">
+            <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+            {d.updated && <span>Atualizado em {formatDate(d.updated)}</span>}
+            <span>{readingTime(post.body)} min de leitura</span>
+          </div>
+        </div>
+      </div>
+
+      {
+        yt ? (
+          <button class="video yt-lite" data-id={yt} aria-label={`Assistir: ${d.title}`}>
+            <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" loading="eager" />
+            <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span>
+          </button>
+        ) : (
+          <figure class="article-cover">
+            <Cover src={d.cover} alt={d.coverAlt ?? d.title} category={d.category} eager />
+            {d.coverAlt && <figcaption class="caption">{d.coverAlt}</figcaption>}
+          </figure>
+        )
+      }
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        d.type === 'review' && d.score != null && (
+          <section class="review-box" aria-label="Veredito">
+            <div class="review-top">
+              <div class="review-score" style={`--pct:${Number(d.score) * 10}`}>
+                <span>{Number(d.score).toFixed(1).replace('.0', '')}</span>
+              </div>
+              <div>
+                <div class="kicker">Veredito MTH Play</div>
+                <h2>{d.game ?? d.title}</h2>
+                {d.platform && <div class="meta">Jogado no {d.platform}</div>}
+              </div>
+            </div>
+            {(d.pros.length > 0 || d.cons.length > 0) && (
+              <div class="review-cols">
+                <div class="pros">
+                  <h3>Prós</h3>
+                  <ul>{d.pros.map((x) => <li>{x}</li>)}</ul>
+                </div>
+                <div class="cons">
+                  <h3>Contras</h3>
+                  <ul>{d.cons.map((x) => <li>{x}</li>)}</ul>
+                </div>
+              </div>
+            )}
+          </section>
+        )
+      }
+
+      {
+        jogo && (
+          <section class="about-game" data-pagefind-ignore>
+            <div class="kicker">Sobre o jogo</div>
+            <JogoCard jogo={jogo} variant="mini" />
+            <a class="btn" href={`/jogo/${jogo.id}/`}>Ver tudo sobre {jogo.data.title} →</a>
+          </section>
+        )
+      }
+
+      {
+        d.tags.length > 0 && (
+          <div class="cat-list" style="margin-top:32px">
+            {d.tags.map((t) => <a class="chip" href={`/tag/${slugify(t)}/`}>#{t}</a>)}
+          </div>
+        )
+      }
+
+      <div class="share" data-pagefind-ignore>
+        <span>Compartilhe:</span>
+        <a class="btn" target="_blank" rel="noopener" href={`https://wa.me/?text=${encodeURIComponent(d.title + ' ' + url)}`}>WhatsApp</a>
+        <a class="btn" target="_blank" rel="noopener" href={`https://x.com/intent/post?text=${encodeURIComponent(d.title)}&url=${encodeURIComponent(url)}`}>X</a>
+        <a class="btn" target="_blank" rel="noopener" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}>Facebook</a>
+        <button class="btn" id="copy-link" data-url={url}>Copiar link</button>
+      </div>
+
+      <Comments />
+    </article>
+
+    <Sidebar exclude={post.id} />
+  </div>
+
+  {
+    related.length > 0 && (
+      <section class="section">
+        <SectionHead title="Leia também" />
+        <div class="grid-4">{related.map((p) => <PostCard post={p} variant="card" showExcerpt={false} />)}</div>
+      </section>
+    )
+  }
+
+  <script is:inline>
+    const b = document.getElementById('copy-link');
+    b?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.url); b.textContent = 'Link copiado!'; } catch (e) {}
+    });
+    // O player do YouTube só carrega quando a pessoa clica (deixa a página leve).
+    document.querySelectorAll('.yt-lite').forEach((el) => {
+      el.addEventListener('click', () => {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${el.dataset.id}?autoplay=1`;
+        f.title = el.getAttribute('aria-label');
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        f.allowFullscreen = true;
+        const box = document.createElement('div');
+        box.className = 'video';
+        box.appendChild(f);
+        el.replaceWith(box);
+      }, { once: true });
+    });
+    const bar = document.getElementById('progress-bar');
+    const art = document.querySelector('.article');
+    const onScroll = () => {
+      const r = art.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+      bar.style.transform = `scaleX(${p})`;
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+  </script>
+</Base>

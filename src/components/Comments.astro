@@ -1,0 +1,31 @@
+---
+// Comentários via Giscus (grátis, usa GitHub Discussions). Configure em src/data/site.ts.
+import { SITE } from '../data/site';
+const g = SITE.giscus;
+---
+
+{
+  g.repo && g.repoId && g.categoryId && (
+    <section data-pagefind-ignore style="margin-top:40px">
+      <h2 style="font-size:18px;margin-bottom:16px">Comentários</h2>
+      <script
+        is:inline
+        src="https://giscus.app/client.js"
+        data-repo={g.repo}
+        data-repo-id={g.repoId}
+        data-category={g.category}
+        data-category-id={g.categoryId}
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="pt"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async
+      />
+    </section>
+  )
+}

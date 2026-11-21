@@ -1,0 +1,17 @@
+---
+import { categoryName, categoryColor, typeName } from '../lib/posts';
+interface Props {
+  category: string;
+  type?: string;
+  link?: boolean;
+}
+const { category, type, link = false } = Astro.props;
+const Tag = link ? 'a' : 'span';
+---
+
+<span class="pills">
+  <Tag class="pill" style={`--cat:${categoryColor(category)}`} href={link ? `/categoria/${category}/` : undefined}>
+    {categoryName(category)}
+  </Tag>
+  {type && type !== 'noticia' && <span class="pill pill-type">{typeName(type)}</span>}
+</span>

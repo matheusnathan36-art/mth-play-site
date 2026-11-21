@@ -1,0 +1,71 @@
+---
+import PostCard from './PostCard.astro';
+import SectionHead from './SectionHead.astro';
+import JogoCard from './JogoCard.astro';
+import { getPosts, getJogos } from '../lib/posts';
+import { MENU_CATEGORIES, SITE } from '../data/site';
+
+interface Props {
+  exclude?: string;
+}
+const { exclude } = Astro.props;
+const posts = (await getPosts()).filter((p) => p.id !== exclude);
+// "Em alta": publicações marcadas como Em alta no painel; se não houver, as mais recentes.
+const marked = posts.filter((p) => p.data.trending);
+const trending = (marked.length ? [...marked, ...posts.filter((p) => !p.data.trending)] : posts).slice(0, 5);
+const reviews = posts.filter((p) => p.data.type === 'review').slice(0, 4);
+const upcoming = (await getJogos())
+  .filter((j) => j.data.releaseDate && j.data.releaseDate.getTime() >= Date.now() - 86400000)
+  .sort((a, b) => a.data.releaseDate!.getTime() - b.data.releaseDate!.getTime())
+  .slice(0, 4);
+const usedCats =MENU_CATEGORIES.filter(
+  (c) => posts.some((p) => p.data.category === c.slug),
+);
+---
+
+<aside class="sidebar">
+  <section class="side-block">
+    <SectionHead title="Em alta" />
+    <div class="rank-list">
+      {trending.map((p, i) => <PostCard post={p} variant="rank" rank={i + 1} />)}
+    </div>
+  </section>
+
+  {
+    reviews.length > 0 && (
+      <section class="side-block">
+        <SectionHead title="Reviews" href="/reviews/" />
+        <div class="list">
+          {reviews.map((p) => <PostCard post={p} variant="list" />)}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    upcoming.length > 0 && (
+      <section class="side-block">
+        <SectionHead title="Próximos lançamentos" href="/lancamentos/" linkText="Calendário" />
+        <div class="list">
+          {upcoming.map((j) => <JogoCard jogo={j} variant="mini" />)}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="side-block yt-box">
+    <div class="yt-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"></path></svg>
+    </div>
+    <h3>{SITE.youtubeBox.title}</h3>
+    <p>{SITE.youtubeBox.text}</p>
+    <a class="btn btn-primary" href={SITE.social.youtube} target="_blank" rel="noopener">{SITE.youtubeBox.button}</a>
+  </section>
+
+  <section class="side-block">
+    <SectionHead title="Plataformas" />
+    <div class="cat-list">
+      {usedCats.map((c) => <a class="pill pill-lg" style={`--cat:${c.color}`} href={`/categoria/${c.slug}/`}>{c.name}</a>)}
+    </div>
+  </section>
+</aside>

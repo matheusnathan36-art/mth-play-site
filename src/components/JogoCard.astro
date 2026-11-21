@@ -1,0 +1,34 @@
+---
+import Cover from './Cover.astro';
+import { jogoUrl, releaseLabel, categoryName, categoryColor, youtubeId, type Jogo } from '../lib/posts';
+interface Props {
+  jogo: Jogo;
+  variant?: 'card' | 'mini';
+}
+const { jogo, variant = 'card' } = Astro.props;
+const d = jogo.data;
+const yt = youtubeId(d.trailer);
+const cover = d.cover ?? (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined);
+const mainCat = d.platforms[0] ?? 'geral';
+---
+
+{
+  variant === 'card' ? (
+    <a href={jogoUrl(jogo)} class="card jogo-card">
+      <Cover src={cover} alt={d.title} category={mainCat} />
+      <h3>{d.title}</h3>
+      <span class="meta">{releaseLabel(jogo)}</span>
+      <span class="pills">
+        {d.platforms.map((p) => <span class="pill" style={`--cat:${categoryColor(p)}`}>{categoryName(p)}</span>)}
+      </span>
+    </a>
+  ) : (
+    <a href={jogoUrl(jogo)} class="list-item">
+      <Cover src={cover} alt={d.title} category={mainCat} />
+      <div>
+        <h3>{d.title}</h3>
+        <span class="meta">{releaseLabel(jogo)}</span>
+      </div>
+    </a>
+  )
+}

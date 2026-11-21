@@ -1,0 +1,33 @@
+---
+import { authorUrl, initials, type Autor } from '../lib/posts';
+interface Props {
+  autor: Autor;
+  count?: number;
+  big?: boolean;
+}
+const { autor, count, big = false } = Astro.props;
+const d = autor.data;
+const links = [
+  { href: d.instagram, label: 'Instagram' },
+  { href: d.youtube, label: 'YouTube' },
+  { href: d.twitter, label: 'X' },
+].filter((l) => l.href);
+const Tag = big ? 'div' : 'a';
+---
+
+<Tag class:list={['author-card', { big }]} href={big ? undefined : authorUrl(autor)}>
+  {d.avatar ? <img class="avatar" src={d.avatar} alt="" /> : <span class="avatar">{initials(d.name)}</span>}
+  <div>
+    {big ? <h1 class="page-title">{d.name}</h1> : <h3>{d.name}</h3>}
+    {d.role && <div class="kicker">{d.role}</div>}
+    {count != null && <div class="meta">{count} publicaç{count === 1 ? 'ão' : 'ões'}</div>}
+    {big && autor.body && <p class="author-bio">{autor.body.trim()}</p>}
+    {
+      big && links.length > 0 && (
+        <div class="cat-list" style="margin-top:12px">
+          {links.map((l) => <a class="chip" href={l.href} target="_blank" rel="noopener">{l.label}</a>)}
+        </div>
+      )
+    }
+  </div>
+</Tag>

@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pager from '../../components/Pager.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getPosts } from '../../lib/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: 15 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Base title={page.currentPage > 1 ? `Últimas notícias, página ${page.currentPage}` : 'Últimas notícias'}>
+  <header class="page-head">
+    <h1 class="page-title">Últimas notícias</h1>
+    <p class="page-sub">Tudo o que saiu no MTH Play, do mais novo para o mais antigo.</p>
+  </header>
+  <div class="layout-2">
+    <section>
+      <div class="rows">
+        {page.data.map((p, i) => <PostCard post={p} variant="row" eager={i < 2} />)}
+      </div>
+      <Pager prev={page.url.prev} next={page.url.next} />
+    </section>
+    <Sidebar />
+  </div>
+</Base>

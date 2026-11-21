@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  href?: string;
+  linkText?: string;
+  color?: string;
+}
+const { title, href, linkText = 'Ver mais', color } = Astro.props;
+---
+
+<div class="sec-head" style={color ? `--cat:${color}` : undefined}>
+  <h2>{title}</h2>
+  {href && <a href={href}>{linkText} <span aria-hidden="true">→</span></a>}
+</div>

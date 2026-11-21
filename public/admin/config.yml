@@ -1,0 +1,261 @@
+# Painel de notícias do MTH Play (Sveltia CMS)
+# Acesse em: https://SEU-SITE/admin/
+#
+# >>> TROQUE as duas linhas marcadas com "TROCAR" depois de criar o GitHub e o login (ver COMO-PUBLICAR.md)
+
+backend:
+  name: github
+  repo: matheusnathan36-art/mth-play-site
+  branch: main
+  base_url: https://sveltia-cms-auth.SEU-USUARIO.workers.dev # TROCAR: endereço do seu Worker de login
+  commit_messages:
+    create: 'Nova publicação: {{slug}}'
+    update: 'Atualiza: {{slug}}'
+    delete: 'Remove: {{slug}}'
+    uploadMedia: 'Envia imagem: {{path}}'
+    deleteMedia: 'Remove imagem: {{path}}'
+
+site_url: https://mthplay.pages.dev
+display_url: https://mthplay.pages.dev
+logo_url: /logo-square.png
+locale: pt
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: noticias
+    label: Publicações
+    label_singular: Publicação
+    description: Notícias, reviews, guias e listas do MTH Play.
+    folder: src/content/noticias
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{slug}}'
+    preview_path: noticia/{{slug}}
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title, category]
+    view_filters:
+      - { label: Notícias, field: type, pattern: noticia }
+      - { label: Reviews, field: type, pattern: review }
+      - { label: Guias, field: type, pattern: guia }
+      - { label: Vídeos, field: type, pattern: video }
+      - { label: Rascunhos, field: draft, pattern: true }
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Resumo (aparece no card e no Google), name: description, widget: text }
+      - { label: Data de publicação, name: date, widget: datetime, hint: 'Coloque uma data futura para agendar: a matéria só aparece no site nesse horário.' }
+      - label: Tipo
+        name: type
+        widget: select
+        default: noticia
+        options:
+          - { label: Notícia, value: noticia }
+          - { label: Review, value: review }
+          - { label: Guia, value: guia }
+          - { label: Lista, value: lista }
+          - { label: Vídeo, value: video }
+      - label: Categoria
+        name: category
+        widget: relation
+        collection: configuracoes
+        file: geral
+        value_field: 'categories.*.slug'
+        search_fields: ['categories.*.name']
+        display_fields: ['categories.*.name']
+        default: geral
+        hint: 'As categorias são editadas em Configurações → Categorias.'
+      - { label: Imagem de capa, name: cover, widget: image, required: false }
+      - { label: Legenda/descrição da capa, name: coverAlt, widget: string, required: false }
+      - { label: Vídeo do YouTube (link), name: youtube, widget: string, required: false, hint: 'Cole o link do vídeo. Ele aparece no topo da matéria.' }
+      - label: Autor
+        name: author
+        widget: relation
+        collection: autores
+        value_field: '{{slug}}'
+        search_fields: [name]
+        display_fields: [name]
+        required: false
+        default: equipe-mth-play
+      - label: Jogo relacionado
+        name: jogo
+        widget: relation
+        collection: jogos
+        value_field: '{{slug}}'
+        search_fields: [title]
+        display_fields: [title]
+        required: false
+        hint: 'A matéria aparece na página do jogo. Cadastre o jogo antes em "Jogos".'
+      - { label: Tags, name: tags, widget: list, required: false, hint: 'Separe por vírgula. Ex.: GTA VI, Rockstar' }
+      - { label: Destaque na home (mosaico do topo), name: featured, widget: boolean, default: false }
+      - { label: Em alta (ranking lateral), name: trending, widget: boolean, default: false }
+      - { label: Rascunho (não publicar ainda), name: draft, widget: boolean, default: false }
+      - { label: 'Review: nome do jogo', name: game, widget: string, required: false }
+      - { label: 'Review: jogado no (plataforma)', name: platform, widget: string, required: false }
+      - { label: 'Review: nota (0 a 10)', name: score, widget: number, value_type: float, min: 0, max: 10, step: 0.5, required: false }
+      - { label: 'Review: prós', name: pros, widget: list, required: false }
+      - { label: 'Review: contras', name: cons, widget: list, required: false }
+      - { label: Texto da matéria, name: body, widget: markdown }
+
+  - name: jogos
+    label: Jogos
+    label_singular: Jogo
+    description: Páginas de jogo. Jogos com data de lançamento aparecem no Calendário de lançamentos.
+    folder: src/content/jogos
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{slug}}'
+    identifier_field: title
+    preview_path: jogo/{{slug}}
+    summary: '{{title}} · {{releaseDate}}{{releaseText}}'
+    sortable_fields: [title, releaseDate]
+    fields:
+      - { label: Nome do jogo, name: title, widget: string }
+      - { label: Resumo, name: description, widget: text }
+      - { label: Imagem de capa, name: cover, widget: image, required: false, hint: 'Ideal 1280×720. Sem capa, usa a miniatura do trailer.' }
+      - { label: Data de lançamento, name: releaseDate, widget: datetime, time_format: false, format: 'YYYY-MM-DD', date_format: 'DD/MM/YYYY', required: false }
+      - { label: Lançamento sem data exata, name: releaseText, widget: string, required: false, hint: 'Use quando não há dia certo. Ex.: 2027, 1º semestre de 2027, A definir' }
+      - label: Plataformas
+        name: platforms
+        widget: relation
+        collection: configuracoes
+        file: geral
+        value_field: 'categories.*.slug'
+        search_fields: ['categories.*.name']
+        display_fields: ['categories.*.name']
+        multiple: true
+        required: false
+      - { label: Desenvolvedora, name: developer, widget: string, required: false }
+      - { label: Publicadora, name: publisher, widget: string, required: false }
+      - { label: Gêneros, name: genres, widget: list, required: false, hint: 'Ex.: Ação, RPG' }
+      - { label: Trailer (link do YouTube), name: trailer, widget: string, required: false }
+      - { label: Outros nomes/tags deste jogo, name: aliases, widget: list, required: false, hint: 'Matérias com essas tags entram automaticamente na página do jogo. Ex.: GTA 6, GTA VI' }
+      - { label: Sobre o jogo, name: body, widget: markdown, required: false }
+
+  - name: autores
+    label: Equipe
+    label_singular: Autor
+    description: Quem escreve no MTH Play. Aparece na página Equipe e na assinatura das matérias.
+    folder: src/content/autores
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{name}}'
+    identifier_field: name
+    preview_path: autor/{{slug}}
+    fields:
+      - { label: Nome, name: name, widget: string }
+      - { label: Função, name: role, widget: string, required: false, hint: 'Ex.: Editor-chefe, Redator, Reviews' }
+      - { label: Foto, name: avatar, widget: image, required: false, hint: 'Quadrada, ex.: 400×400' }
+      - { label: Instagram (link), name: instagram, widget: string, required: false }
+      - { label: YouTube (link), name: youtube, widget: string, required: false }
+      - { label: X/Twitter (link), name: twitter, widget: string, required: false }
+      - { label: Ordem na página Equipe, name: order, widget: number, value_type: int, required: false }
+      - { label: Bio, name: body, widget: markdown, required: false }
+
+  - name: paginas
+    label: Páginas
+    label_singular: Página
+    description: Textos das páginas Sobre, Contato, Privacidade e Termos.
+    folder: src/content/paginas
+    create: false
+    delete: false
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    preview_path: '{{slug}}'
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Descrição (Google), name: description, widget: string, required: false }
+      - { label: Frase de abertura, name: intro, widget: string, required: false }
+      - { label: Última atualização, name: updated, widget: string, required: false, hint: 'Ex.: 21 de novembro de 2026 (aparece em Privacidade e Termos)' }
+      - { label: Texto, name: body, widget: markdown }
+
+  - name: configuracoes
+    label: Configurações
+    description: Nome, logo, cores, redes sociais, categorias e textos fixos do site.
+    files:
+      - name: geral
+        label: Configurações do site
+        file: src/data/settings.json
+        format: json
+        fields:
+          - { label: Nome do site, name: name, widget: string }
+          - { label: Slogan (aparece na aba do navegador), name: tagline, widget: string }
+          - { label: Descrição do site (Google e rodapé), name: description, widget: text }
+          - { label: Logo, name: logo, widget: image, hint: 'PNG com fundo transparente, de preferência.' }
+          - { label: E-mail de contato, name: email, widget: string, required: false }
+          - { label: Endereço do site, name: url, widget: string, hint: 'Só mude se tiver domínio próprio. Ex.: https://mthplay.com.br' }
+          - label: Cores da marca
+            name: colors
+            widget: object
+            fields:
+              - { label: Cor principal, name: primary, widget: color }
+              - { label: Cor secundária, name: secondary, widget: color }
+          - label: Redes sociais
+            name: social
+            widget: object
+            hint: 'Deixe vazio o que não usar. Os ícones aparecem só para as redes preenchidas.'
+            fields:
+              - { label: YouTube, name: youtube, widget: string, required: false }
+              - { label: Instagram, name: instagram, widget: string, required: false }
+              - { label: TikTok, name: tiktok, widget: string, required: false }
+              - { label: X/Twitter, name: twitter, widget: string, required: false }
+              - { label: Discord (convite), name: discord, widget: string, required: false }
+              - { label: WhatsApp (link do canal ou grupo), name: whatsapp, widget: string, required: false }
+          - label: Caixa do YouTube (lateral)
+            name: youtubeBox
+            widget: object
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Texto, name: text, widget: string }
+              - { label: Texto do botão, name: button, widget: string }
+          - label: Chamada do fim da home
+            name: cta
+            widget: object
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Texto, name: text, widget: string }
+          - { label: Frase do rodapé, name: footerNote, widget: string, required: false }
+          - label: Categorias / plataformas
+            name: categories
+            widget: list
+            summary: '{{fields.name}}'
+            hint: 'O "código" é usado no endereço (/categoria/codigo). Não mude o código de uma categoria que já tem matérias.'
+            fields:
+              - { label: Nome, name: name, widget: string }
+              - { label: Código (sem espaço nem acento), name: slug, widget: string, pattern: ['^[a-z0-9-]+$', 'Use só letras minúsculas, números e hífen'] }
+              - { label: Cor da etiqueta, name: color, widget: color }
+              - { label: Mostrar no menu Plataformas, name: menu, widget: boolean, default: true }
+          - label: Blocos de plataforma na home
+            name: homeSections
+            widget: relation
+            collection: configuracoes
+            file: geral
+            value_field: 'categories.*.slug'
+            search_fields: ['categories.*.name']
+            display_fields: ['categories.*.name']
+            multiple: true
+            hint: 'Escolha até 4, na ordem em que devem aparecer.'
+          - label: Código do Google AdSense
+            name: adsenseClient
+            widget: string
+            required: false
+            hint: 'Quando o AdSense aprovar, cole aqui o código do editor (ex.: ca-pub-1234567890123456). Os anúncios automáticos e o ads.txt são ligados sozinhos. Vazio = sem anúncios.'
+          - label: Código do Google Search Console
+            name: googleVerification
+            widget: string
+            required: false
+            hint: 'Código de verificação do Google Search Console (só o valor de content="...").'
+          - label: Comentários (Giscus)
+            name: giscus
+            widget: object
+            collapsed: true
+            hint: 'Preencha com os dados do giscus.app para ligar os comentários. Vazio = desligado.'
+            fields:
+              - { label: Repositório, name: repo, widget: string, required: false }
+              - { label: ID do repositório, name: repoId, widget: string, required: false }
+              - { label: Categoria, name: category, widget: string, required: false }
+              - { label: ID da categoria, name: categoryId, widget: string, required: false }

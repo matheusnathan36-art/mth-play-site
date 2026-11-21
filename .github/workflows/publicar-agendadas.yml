@@ -1,0 +1,25 @@
+# Publica matérias agendadas: a cada hora verifica se alguma matéria chegou no horário marcado
+# e, só nesse caso, pede ao Cloudflare para atualizar o site (não gasta builds à toa).
+# Configure o segredo CLOUDFLARE_DEPLOY_HOOK no GitHub (ver COMO-PUBLICAR.md).
+name: Publicar matérias agendadas
+
+on:
+  schedule:
+    - cron: '5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar se há matéria para publicar agora
+        id: check
+        run: echo "publicar=$(node .github/scripts/agendadas.mjs)" >> "$GITHUB_OUTPUT"
+      - name: Atualizar o site
+        if: steps.check.outputs.publicar == 'sim' || github.event_name == 'workflow_dispatch'
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "Segredo CLOUDFLARE_DEPLOY_HOOK não configurado"; exit 0; fi
+          curl -s -X POST "$HOOK"

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Buscar" noindex>
+  <link slot="head" href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <h1 class="page-title">Buscar</h1>
+  <p class="page-sub">Procure por jogo, plataforma ou assunto.</p>
+  <div id="search"></div>
+  <p id="search-off" class="page-sub" hidden>
+    A busca só funciona na versão publicada do site (ela é gerada no <code>npm run build</code>).
+  </p>
+  <script is:inline src="/pagefind/pagefind-ui.js" onerror="document.getElementById('search-off').hidden=false"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.PagefindUI) return;
+      const ui = new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        translations: { placeholder: 'Buscar no MTH Play', zero_results: 'Nada encontrado para [SEARCH_TERM]' },
+      });
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) ui.triggerSearch(q);
+    });
+  </script>
+</Base>

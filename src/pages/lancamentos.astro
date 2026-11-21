@@ -1,0 +1,119 @@
+---
+import Base from '../layouts/Base.astro';
+import Cover from '../components/Cover.astro';
+import { getJogos, jogoUrl, categoryName, categoryColor, youtubeId } from '../lib/posts';
+import { MENU_CATEGORIES } from '../data/site';
+
+const jogos = await getJogos();
+const now = new Date();
+const startOfMonth = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+
+// Jogos com data: do mês atual em diante. Jogos sem data exata vão para "Sem data definida".
+const dated = jogos
+  .filter((j) => j.data.releaseDate && j.data.releaseDate.getTime() >= startOfMonth)
+  .sort((a, b) => a.data.releaseDate!.getTime() - b.data.releaseDate!.getTime());
+const undated = jogos.filter((j) => !j.data.releaseDate);
+
+const monthFmt = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const groups = new Map<string, typeof dated>();
+for (const j of dated) {
+  const raw = monthFmt.format(j.data.releaseDate!);
+  const key = raw.charAt(0).toUpperCase() + raw.slice(1);
+  groups.set(key, [...(groups.get(key) ?? []), j]);
+}
+const platforms = MENU_CATEGORIES.filter((c) => jogos.some((j) => j.data.platforms.includes(c.slug)));
+const coverOfJogo = (j: (typeof jogos)[number]) => {
+  const yt = youtubeId(j.data.trailer);
+  return j.data.cover ?? (yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined);
+};
+const day = (d: Date) => String(d.getUTCDate()).padStart(2, '0');
+const weekday = (d: Date) =>
+  new Intl.DateTimeFormat('pt-BR', { weekday: 'short', timeZone: 'UTC' }).format(d).replace('.', '');
+---
+
+<Base title="Calendário de lançamentos" description="Datas de lançamento dos próximos jogos de PlayStation, Xbox, Nintendo, PC e mobile.">
+  <header class="page-head">
+    <h1 class="page-title">Calendário de lançamentos</h1>
+    <p class="page-sub">Os próximos jogos, mês a mês. Filtre pela sua plataforma.</p>
+    <div class="filters" role="group" aria-label="Filtrar por plataforma">
+      <button class="chip active" data-filter="all">Todas</button>
+      {platforms.map((c) => <button class="chip" data-filter={c.slug} style={`--cat:${c.color}`}><span class="dot"></span>{c.name}</button>)}
+    </div>
+  </header>
+
+  {dated.length === 0 && undated.length === 0 && <p class="page-sub">Nenhum lançamento cadastrado ainda.</p>}
+
+  {
+    [...groups].map(([month, list]) => (
+      <section class="cal-month">
+        <h2 class="cal-title">{month}</h2>
+        <div class="cal-list">
+          {list.map((j) => (
+            <a href={jogoUrl(j)} class="cal-item" data-platforms={j.data.platforms.join(' ')}>
+              <div class="cal-date">
+                <span class="cal-day">{day(j.data.releaseDate!)}</span>
+                <span class="cal-wd">{weekday(j.data.releaseDate!)}</span>
+              </div>
+              <Cover src={coverOfJogo(j)} alt={j.data.title} category={j.data.platforms[0] ?? 'geral'} />
+              <div class="cal-body">
+                <h3>{j.data.title}</h3>
+                {j.data.genres.length > 0 && <span class="meta">{j.data.genres.join(' · ')}</span>}
+                <span class="pills">
+                  {j.data.platforms.map((p) => <span class="pill" style={`--cat:${categoryColor(p)}`}>{categoryName(p)}</span>)}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    undated.length > 0 && (
+      <section class="cal-month">
+        <h2 class="cal-title">Sem data definida</h2>
+        <div class="cal-list">
+          {undated.map((j) => (
+            <a href={jogoUrl(j)} class="cal-item" data-platforms={j.data.platforms.join(' ')}>
+              <div class="cal-date">
+                <span class="cal-day cal-tba">{j.data.releaseText ?? '?'}</span>
+              </div>
+              <Cover src={coverOfJogo(j)} alt={j.data.title} category={j.data.platforms[0] ?? 'geral'} />
+              <div class="cal-body">
+                <h3>{j.data.title}</h3>
+                <span class="pills">
+                  {j.data.platforms.map((p) => <span class="pill" style={`--cat:${categoryColor(p)}`}>{categoryName(p)}</span>)}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <p id="cal-empty" class="page-sub" hidden>Nenhum lançamento para essa plataforma.</p>
+
+  <script is:inline>
+    const btns = document.querySelectorAll('.filters .chip');
+    btns.forEach((b) =>
+      b.addEventListener('click', () => {
+        btns.forEach((x) => x.classList.toggle('active', x === b));
+        const f = b.dataset.filter;
+        let any = false;
+        document.querySelectorAll('.cal-month').forEach((m) => {
+          let vis = 0;
+          m.querySelectorAll('.cal-item').forEach((it) => {
+            const show = f === 'all' || it.dataset.platforms.split(' ').includes(f);
+            it.hidden = !show;
+            if (show) vis++;
+          });
+          m.hidden = vis === 0;
+          if (vis) any = true;
+        });
+        document.getElementById('cal-empty').hidden = any;
+      }),
+    );
+  </script>
+</Base>

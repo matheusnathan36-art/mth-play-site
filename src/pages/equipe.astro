@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import AuthorCard from '../components/AuthorCard.astro';
+import { getAuthors, getPosts, postsByAuthor } from '../lib/posts';
+
+const posts = await getPosts();
+const autores = getAuthors();
+---
+
+<Base title="Equipe" description="Conheça quem escreve no MTH Play.">
+  <header class="page-head">
+    <h1 class="page-title">Equipe</h1>
+    <p class="page-sub">Quem faz o MTH Play acontecer.</p>
+  </header>
+  <div class="team-grid">
+    {autores.map((a) => <AuthorCard autor={a} count={postsByAuthor(posts, a).length} />)}
+  </div>
+</Base>

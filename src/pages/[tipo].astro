@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getPosts } from '../lib/posts';
+import { TYPES } from '../data/site';
+
+const PAGES: Record<string, { types: string[]; sub: string }> = {
+  reviews: { types: ['review'], sub: 'Análises com nota de 0 a 10, prós e contras.' },
+  guias: { types: ['guia'], sub: 'Detonados, dicas e tutoriais para ir direto ao ponto.' },
+  listas: { types: ['lista'], sub: 'Rankings e seleções dos melhores jogos.' },
+  videos: { types: ['video'], sub: 'Cortes, gameplays e vídeos do canal MTH Play.' },
+};
+
+export function getStaticPaths() {
+  return ['reviews', 'guias', 'listas', 'videos'].map((tipo) => ({ params: { tipo } }));
+}
+
+const { tipo } = Astro.params as { tipo: string };
+const cfg = PAGES[tipo];
+const name = TYPES.find((t) => t.slug === cfg.types[0])!.plural;
+const all = await getPosts();
+const posts = all.filter((p) => cfg.types.includes(p.data.type) || (tipo === 'videos' && p.data.youtube));
+---
+
+<Base title={name} description={cfg.sub}>
+  <header class="page-head">
+    <h1 class="page-title">{name}</h1>
+    <p class="page-sub">{cfg.sub}</p>
+  </header>
+  <div class="layout-2">
+    <section>
+      {posts.length === 0 && <p class="page-sub">Nada publicado aqui ainda.</p>}
+      {posts[0] && <PostCard post={posts[0]} variant="overlay" size="lg" eager />}
+      <div class="rows" style="margin-top:24px">
+        {posts.slice(1).map((p) => <PostCard post={p} variant="row" />)}
+      </div>
+    </section>
+    <Sidebar />
+  </div>
+</Base>

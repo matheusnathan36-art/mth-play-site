@@ -1,0 +1,16 @@
+---
+interface Props {
+  prev?: string;
+  next?: string;
+}
+const { prev, next } = Astro.props;
+---
+
+{
+  (prev || next) && (
+    <nav class="pager" aria-label="Paginação">
+      {prev ? <a class="btn" href={prev}>← Mais recentes</a> : <span />}
+      {next ? <a class="btn" href={next}>Mais antigas →</a> : <span />}
+    </nav>
+  )
+}

@@ -1,0 +1,23 @@
+---
+// Renderiza uma página institucional editada no painel (coleção "paginas").
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+interface Props {
+  id: string;
+}
+const page = await getEntry('paginas', Astro.props.id);
+if (!page) throw new Error(`Página "${Astro.props.id}" não encontrada em src/content/paginas`);
+const { Content } = await render(page);
+const d = page.data;
+---
+
+<Base title={d.title} description={d.description}>
+  <article class="article legal">
+    <h1>{d.title}</h1>
+    {d.updated && <p class="meta">Última atualização: {d.updated}</p>}
+    {d.intro && <p class="lead">{d.intro}</p>}
+    <slot />
+    <div class="prose"><Content /></div>
+  </article>
+</Base>

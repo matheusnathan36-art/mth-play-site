@@ -1,0 +1,34 @@
+---
+import { categoryName, categoryColor } from '../lib/posts';
+interface Props {
+  src?: string;
+  alt?: string;
+  category: string;
+  score?: number | null;
+  eager?: boolean;
+  video?: boolean;
+  class?: string;
+}
+const { src, alt = '', category, score, eager = false, video = false, class: cls = '' } = Astro.props;
+const color = categoryColor(category);
+---
+
+<div class:list={['cover', cls]} style={`--cat:${color}`}>
+  {
+    src ? (
+      <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    ) : (
+      <div class="cover-ph" aria-hidden="true">
+        <span>{categoryName(category)}</span>
+      </div>
+    )
+  }
+  {
+    video && (
+      <span class="play" aria-label="Vídeo">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+      </span>
+    )
+  }
+  {score != null && <span class="score">{Number(score).toFixed(1).replace('.0', '')}</span>}
+</div>

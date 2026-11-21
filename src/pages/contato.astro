@@ -1,0 +1,26 @@
+---
+import SimplePage from '../components/SimplePage.astro';
+import { SITE } from '../data/site';
+import { socialLinks } from '../lib/social';
+---
+
+<SimplePage id="contato">
+  <div class="contact-grid">
+    {
+      SITE.email && (
+        <a class="side-block contact-item" href={`mailto:${SITE.email}`}>
+          <strong>E-mail</strong>
+          <span>{SITE.email}</span>
+        </a>
+      )
+    }
+    {
+      socialLinks.map((s) => (
+        <a class="side-block contact-item" href={s.href} target="_blank" rel="noopener">
+          <strong>{s.label}</strong>
+          <span>{s.href.replace(/^https?:\/\/(www\.)?/, '')}</span>
+        </a>
+      ))
+    }
+  </div>
+</SimplePage>

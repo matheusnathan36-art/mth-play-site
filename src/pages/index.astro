@@ -1,0 +1,118 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getPosts, categoryName, categoryColor } from '../lib/posts';
+import { HOME_SECTIONS, SITE } from '../data/site';
+import { socialLinks } from '../lib/social';
+
+const posts = await getPosts();
+
+// Mosaico do topo: publicações em Destaque primeiro, completando com as mais recentes.
+const featured = posts.filter((p) => p.data.featured);
+const heroPosts = [...featured, ...posts.filter((p) => !p.data.featured)].slice(0, 5);
+const heroIds = new Set(heroPosts.map((p) => p.id));
+const rest = posts.filter((p) => !heroIds.has(p.id));
+
+const latest = rest.slice(0, 8);
+const reviews = posts.filter((p) => p.data.type === 'review').slice(0, 4);
+const videos = posts.filter((p) => p.data.type === 'video' || p.data.youtube).slice(0, 4);
+const guides = posts.filter((p) => p.data.type === 'guia' || p.data.type === 'lista').slice(0, 4);
+const catBlocks = HOME_SECTIONS.map((slug) => ({
+  slug,
+  name: categoryName(slug),
+  color: categoryColor(slug),
+  items: posts.filter((p) => p.data.category === slug).slice(0, 4),
+})).filter((b) => b.items.length > 0);
+---
+
+<Base>
+  {
+    posts.length === 0 ? (
+      <p class="page-sub" style="margin-top:40px">Nenhuma notícia publicada ainda. Entre em /admin para escrever a primeira.</p>
+    ) : (
+      <>
+        <section class="mosaic" aria-label="Destaques">
+          {heroPosts.map((p, i) => (
+            <PostCard post={p} variant="overlay" size={i === 0 ? 'lg' : 'sm'} eager={i < 3} />
+          ))}
+        </section>
+
+        <div class="layout-2 section">
+          <section>
+            <SectionHead title="Últimas notícias" href="/noticias/" linkText="Ver todas" />
+            <div class="rows">
+              {latest.map((p) => <PostCard post={p} variant="row" />)}
+            </div>
+            <a class="btn btn-block" href="/noticias/">Carregar mais notícias</a>
+          </section>
+          <Sidebar />
+        </div>
+      </>
+    )
+  }
+
+  {
+    reviews.length > 0 && (
+      <section class="band">
+        <div class="band-inner">
+          <SectionHead title="Reviews" href="/reviews/" linkText="Todas as reviews" />
+          <div class="grid-4">
+            {reviews.map((p) => <PostCard post={p} variant="overlay" size="md" />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    catBlocks.length > 0 && (
+      <div class="cat-blocks section">
+        {catBlocks.map((b) => (
+          <section class="cat-block">
+            <SectionHead title={b.name} href={`/categoria/${b.slug}/`} color={b.color} />
+            <PostCard post={b.items[0]} variant="card" />
+            <div class="list">
+              {b.items.slice(1).map((p) => <PostCard post={p} variant="list" />)}
+            </div>
+          </section>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    videos.length > 0 && (
+      <section class="section">
+        <SectionHead title="Vídeos" href="/videos/" />
+        <div class="grid-4">
+          {videos.map((p) => <PostCard post={p} variant="card" showExcerpt={false} />)}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    guides.length > 0 && (
+      <section class="section">
+        <SectionHead title="Guias e listas" href="/guias/" />
+        <div class="grid-4">
+          {guides.map((p) => <PostCard post={p} variant="card" />)}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="cta">
+    <div>
+      <h2>{SITE.cta.title}</h2>
+      <p>{SITE.cta.text}</p>
+    </div>
+    <div class="cta-actions">
+      {socialLinks.slice(0, 4).map((s, i) => (
+        <a class:list={['btn', { 'btn-primary': i === 0 }]} href={s.href} target="_blank" rel="noopener">{s.label}</a>
+      ))}
+    </div>
+  </section>
+</Base>

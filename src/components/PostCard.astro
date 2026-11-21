@@ -1,0 +1,91 @@
+---
+import Cover from './Cover.astro';
+import Pill from './Pill.astro';
+import { postUrl, formatDate, readingTime, authorOf, coverOf, type Post } from '../lib/posts';
+interface Props {
+  post: Post;
+  variant?: 'card' | 'list' | 'overlay' | 'row' | 'rank';
+  size?: 'lg' | 'md' | 'sm';
+  rank?: number;
+  eager?: boolean;
+  showExcerpt?: boolean;
+}
+const { post, variant = 'card', size = 'md', rank, eager = false, showExcerpt = true } = Astro.props;
+const d = post.data;
+const href = postUrl(post);
+const score = d.type === 'review' ? d.score : null;
+const isVideo = d.type === 'video' || !!d.youtube;
+const mins = readingTime(post.body);
+const cover = coverOf(post);
+---
+
+{
+  variant === 'overlay' && (
+    <a href={href} class:list={['ov', `ov-${size}`]}>
+      <Cover src={cover} alt={d.coverAlt} category={d.category} score={score} eager={eager} video={isVideo} />
+      <div class="ov-body">
+        <Pill category={d.category} type={d.type} />
+        <h3>{d.title}</h3>
+        {size === 'lg' && <p>{d.description}</p>}
+        <span class="meta">
+          {size !== 'sm' && <span>Por {authorOf(post)}</span>}
+          <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+        </span>
+      </div>
+    </a>
+  )
+}
+{
+  variant === 'card' && (
+    <a href={href} class="card">
+      <Cover src={cover} alt={d.coverAlt} category={d.category} score={score} eager={eager} video={isVideo} />
+      <Pill category={d.category} type={d.type} />
+      <h3>{d.title}</h3>
+      {showExcerpt && <p>{d.description}</p>}
+      <span class="meta">
+        <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+        <span>{mins} min</span>
+      </span>
+    </a>
+  )
+}
+{
+  variant === 'row' && (
+    <a href={href} class="row">
+      <Cover src={cover} alt={d.coverAlt} category={d.category} score={score} eager={eager} video={isVideo} />
+      <div class="row-body">
+        <Pill category={d.category} type={d.type} />
+        <h3>{d.title}</h3>
+        <p>{d.description}</p>
+        <span class="meta">
+          <span>Por {authorOf(post)}</span>
+          <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+          <span>{mins} min de leitura</span>
+        </span>
+      </div>
+    </a>
+  )
+}
+{
+  variant === 'list' && (
+    <a href={href} class="list-item">
+      <Cover src={cover} alt={d.coverAlt} category={d.category} score={score} />
+      <div>
+        <Pill category={d.category} />
+        <h3>{d.title}</h3>
+        <span class="meta">{formatDate(d.date)}</span>
+      </div>
+    </a>
+  )
+}
+{
+  variant === 'rank' && (
+    <a href={href} class="rank-item">
+      <span class="rank-n">{rank}</span>
+      <div>
+        <Pill category={d.category} />
+        <h3>{d.title}</h3>
+      </div>
+    </a>
+  )
+}

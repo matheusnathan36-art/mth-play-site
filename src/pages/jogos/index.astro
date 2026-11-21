@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import JogoCard from '../../components/JogoCard.astro';
+import { getJogos } from '../../lib/posts';
+
+const jogos = await getJogos();
+---
+
+<Base title="Jogos" description="Páginas dos jogos com notícias, reviews, guias e data de lançamento.">
+  <header class="page-head">
+    <h1 class="page-title">Jogos</h1>
+    <p class="page-sub">Tudo sobre cada jogo em um só lugar: notícias, review, guias e lançamento.</p>
+  </header>
+  <div class="grid-4">
+    {jogos.map((j) => <JogoCard jogo={j} />)}
+  </div>
+  {jogos.length === 0 && <p class="page-sub">Nenhum jogo cadastrado ainda.</p>}
+</Base>

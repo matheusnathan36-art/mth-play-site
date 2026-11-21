@@ -1,0 +1,49 @@
+{
+  "name": "MTH Play",
+  "tagline": "Notícias, reviews e guias de games",
+  "description": "MTH Play: as principais notícias de games, reviews, guias e lançamentos de PC, PlayStation, Xbox, Nintendo e mobile.",
+  "url": "https://mthplay.pages.dev",
+  "logo": "/logo.png",
+  "email": "",
+  "colors": {
+    "primary": "#22d3ee",
+    "secondary": "#ff2bb3"
+  },
+  "social": {
+    "youtube": "https://www.youtube.com/@mthplayoficial",
+    "instagram": "https://www.instagram.com/mthplayoficial",
+    "tiktok": "https://www.tiktok.com/@mthplayoficial",
+    "twitter": "",
+    "discord": "",
+    "whatsapp": ""
+  },
+  "youtubeBox": {
+    "title": "MTH Play no YouTube",
+    "text": "Cortes, gameplays e o quadro “A primeira HORA”.",
+    "button": "Inscreva-se"
+  },
+  "cta": {
+    "title": "Não perca nenhuma novidade",
+    "text": "Siga o MTH Play e receba as notícias de games primeiro."
+  },
+  "footerNote": "Feito com paixão por games 🎮",
+  "homeSections": ["playstation", "xbox", "nintendo", "pc"],
+  "categories": [
+    { "slug": "playstation", "name": "PlayStation", "color": "#3b82f6", "menu": true },
+    { "slug": "xbox", "name": "Xbox", "color": "#22c55e", "menu": true },
+    { "slug": "nintendo", "name": "Nintendo", "color": "#ef4444", "menu": true },
+    { "slug": "pc", "name": "PC", "color": "#06b6d4", "menu": true },
+    { "slug": "mobile", "name": "Mobile", "color": "#f59e0b", "menu": true },
+    { "slug": "esports", "name": "eSports", "color": "#a855f7", "menu": true },
+    { "slug": "lancamentos", "name": "Lançamentos", "color": "#ec4899", "menu": false },
+    { "slug": "geral", "name": "Geral", "color": "#64748b", "menu": false }
+  ],
+  "googleVerification": "",
+  "adsenseClient": "",
+  "giscus": {
+    "repo": "",
+    "repoId": "",
+    "category": "Comentários",
+    "categoryId": ""
+  }
+}

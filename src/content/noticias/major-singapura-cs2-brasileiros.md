@@ -5,7 +5,8 @@ date: 2026-11-22T09:40:00-03:00
 type: noticia
 category: esports
 author: equipe-mth-play
-cover: /uploads/major-singapura-cs2-brasileiros.jpg
+cover: /uploads/yt-u1hnLoP5xGo.jpg
+youtube: https://www.youtube.com/watch?v=u1hnLoP5xGo
 tags: ["CS2", "Major", "FURIA", "Imperial", "MIBR", "Legacy", "DENDELE"]
 ---
 

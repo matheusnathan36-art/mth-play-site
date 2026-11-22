@@ -47,27 +47,31 @@ Liste os títulos das últimas 30 matérias, ordenadas pelo `date:` do frontmatt
    ```
 4. No frontmatter, use `cover: /uploads/yt-VIDEO_ID.jpg` e `youtube: https://www.youtube.com/watch?v=VIDEO_ID`.
 
-### Opção B: capa com a identidade MTH Play
+Procure com vontade antes de desistir da Opção A. Para eventos de eSports, o organizador (PGL, BLAST, ESL, Riot/LoL Esports, VCT) quase sempre tem vídeo oficial do evento. Para empresas e plataformas, veja o canal oficial delas (PlayStation, Xbox, Nintendo, Steam, Epic, Discord…).
 
-Use quando não houver vídeo oficial. Crie um arquivo JSON e rode o gerador:
+### Opção B: logo oficial da empresa, do jogo ou do evento
 
-```bash
-echo '[{"arquivo":"NOME-DA-MATERIA.jpg","titulo":"Tema curto","etiqueta":"PlayStation","cor":"#3b82f6"}]' > /tmp/capa.json
-node scripts/gerar-capa.mjs /tmp/capa.json
-```
+Use só quando realmente não existir vídeo oficial.
 
-- **Cores por categoria:**
-  - playstation `#3b82f6`
-  - xbox `#22c55e`
-  - nintendo `#ef4444`
-  - pc `#06b6d4`
-  - mobile `#f59e0b`
-  - esports `#a855f7`
-  - lancamentos `#ec4899`
-  - geral `#64748b`
-- No frontmatter, use `cover: /uploads/NOME-DA-MATERIA.jpg`.
+1. Baixe o logo oficial em SVG ou PNG do **Wikimedia Commons**, que publica logos de empresas para uso informativo:
+   ```bash
+   curl -sfL -A "MTHPlay/1.0" -o /tmp/logo.svg "https://commons.wikimedia.org/wiki/Special:FilePath/NOME_DO_ARQUIVO.svg"
+   ```
+   Para achar o nome do arquivo, pesquise em `https://commons.wikimedia.org/w/api.php?action=query&list=search&srnamespace=6&srsearch=NOME%20logo&format=json`. Prefira a versão **atual** do logo, de preferência a branca (white).
+2. Gere a capa com a **cor oficial da marca** no fundo:
+   ```bash
+   node scripts/capa-logo.mjs /tmp/logo.svg "#5865F2" public/uploads/NOME-DA-MATERIA.jpg branco
+   ```
+   - `branco` deixa o logo branco. Use quando o logo for preto ou colorido demais para o fundo.
+   - Exemplos de cor: Discord `#5865F2`, PlayStation `#0070d1`, Xbox `#107c10`, Nintendo `#e60012`, Steam `#1b2838`, Epic `#2a2a2a`, Ubisoft `#1c2a4d`, Riot `#d13639`.
+3. **Abra a imagem gerada e confira** se o logo apareceu, porque alguns SVGs saem vazios. Se não apareceu, tente outra versão do logo (PNG, por exemplo).
+4. No frontmatter, use `cover: /uploads/NOME-DA-MATERIA.jpg`.
 
-**Nunca** baixe fotos de sites de notícias, porque têm direitos autorais.
+### PROIBIDO
+
+- **Capa só com texto:** a capa gerada por `scripts/gerar-capa.mjs` (fundo escuro + frase) **não conta como imagem**. O dono do site considera isso "matéria sem imagem". Não use.
+- **Fotos de sites de notícias:** nunca baixe, porque têm direitos autorais.
+- **Sem saída:** se não conseguir nem a Opção A nem a Opção B, **escolha outra notícia** que tenha imagem oficial.
 
 ## 4. Escrever a matéria
 

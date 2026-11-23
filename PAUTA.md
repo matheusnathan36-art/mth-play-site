@@ -124,6 +124,12 @@ git commit -m "Notícia: TÍTULO" -m "Publicado pela pauta automática."
 git push origin main   # se rejeitar: git pull --rebase origin main && git push origin main
 ```
 
+Depois que a página estiver no ar (espere uns 2-3 minutos e confira se ela responde 200), avise o Bing:
+
+```bash
+node scripts/indexnow.mjs https://mthplay.pages.dev/noticia/SLUG/ https://mthplay.pages.dev/
+```
+
 Só envie arquivos da matéria nova, da imagem dela e, se for o caso, do jogo atualizado. **Não altere** código, layout, configurações (`src/data/settings.json`), `public/admin/` nem este arquivo.
 
 Se algo der errado, como build quebrado, nenhuma notícia nova relevante ou falta de imagem possível, **não publique nada** e explique o motivo no resumo final.

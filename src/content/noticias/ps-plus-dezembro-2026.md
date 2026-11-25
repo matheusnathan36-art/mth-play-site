@@ -1,7 +1,7 @@
 ---
 title: "PS Plus de dezembro: Tony Hawk's Pro Skater 3+4, Dragon Ball Xenoverse 2 e Amnesia: The Bunker"
 description: "A Sony revelou os jogos mensais de dezembro da PlayStation Plus. Os três ficam disponíveis de 1º de dezembro a 4 de janeiro."
-date: 2026-11-25T20:12:00-03:00
+date: 2026-11-25T20:05:00-03:00
 type: noticia
 category: playstation
 author: equipe-mth-play
